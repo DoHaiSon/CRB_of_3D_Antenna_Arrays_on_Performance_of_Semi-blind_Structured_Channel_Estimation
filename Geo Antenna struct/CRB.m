@@ -6,8 +6,8 @@ clc;
 %% Declear
 
 Nt      = 2;         % number of transmit antennas
-Nr_UCA  = 8;         % number of receive antennas of UCA
-Nr_ULA  = 2;         % number of receive antennas of ULA
+Nr_UCA  = 32;         % number of receive antennas of UCA
+Nr_ULA  = 1;         % number of receive antennas of ULA
 L       = 4;         % channel order
 M       = 2;         % Number of multipaths   
 Pxp     = 0.3;
@@ -15,7 +15,7 @@ K       = 64;        % OFDM subcarriers
 F       = dftmtx(K);
 FL      = F(:,1:L);
 sigmax2 = 1;
-fc      = 0;
+fc      = 2.4e9;
 
 %% Signal Generation
 % we use the Zadoff-Chu sequences
@@ -32,7 +32,7 @@ end
 % Fading, delay, DOA matrix of size(M,Nt), M - the number of multipath
 
 fading      = rand(M,Nt);
-delay       = rand(M,Nt);
+delay       = rand(M,Nt) * 10^-6;
 DOA_Phi     = rand(M,Nt) * pi;
 DOA_Theta   = rand(M,Nt) * pi;
 d_ULA_nor   = 0.5;

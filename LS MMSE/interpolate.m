@@ -9,7 +9,7 @@ if pilot_loc(1)>1
     H = [H(1)-slope*(pilot_loc(1)-1) H]; pilot_loc = [1 pilot_loc];
 end
 
-if pilot_loc(end)<Nfft
+if pilot_loc(end)<Nfft          % add a interpolated point to last of 'h' before interp1
     slope = (H(end)-H(end-1))/(pilot_loc(end)-pilot_loc(end-1));
     H = [H H(end)+slope*(Nfft-pilot_loc(end))];
     pilot_loc = [pilot_loc Nfft];

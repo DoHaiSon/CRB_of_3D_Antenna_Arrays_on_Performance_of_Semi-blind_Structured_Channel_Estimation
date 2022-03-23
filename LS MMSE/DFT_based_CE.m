@@ -2,10 +2,10 @@
 % for LS/DFT Channel Estimation with linear/spline interpolation
 clear all; close all; clf
 
-Nfft=32;
+Nfft=64;
 Ng=Nfft/8;
 Nofdm=Nfft+Ng;
-Nsym=52;
+Nsym=128;
 Nps=4;
 Np=Nfft/Nps; % Pilot spacing and number of pilots per OFDM symbol
 Nbps=4;

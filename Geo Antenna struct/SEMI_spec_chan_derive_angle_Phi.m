@@ -1,4 +1,4 @@
-function Br_angle_Phi= SEMI_spec_chan_derive_angle_Phi_UCyA(fading,delay,DOA_Phi,DOA_Theta,position_elements_nor,L,M,Nt, fc)
+function Br_angle_Phi= SEMI_spec_chan_derive_angle_Phi(fading,delay,DOA_Phi,DOA_Theta,position_elements_nor,L,M,Nt)
 
 %Nt = 4;    % number of transmit antennas
 %Nr = 4;    % number of receive antennas
@@ -18,7 +18,7 @@ function Br_angle_Phi= SEMI_spec_chan_derive_angle_Phi_UCyA(fading,delay,DOA_Phi
                 r_x = sin(DOA_Theta(mm,jj)) * cos(DOA_Phi(mm,jj));
                 r_y = sin(DOA_Theta(mm,jj)) * sin(DOA_Phi(mm,jj));
                 r_z = cos(DOA_Theta(mm,jj));
-                Br_angle_Phi_tmp(mm,l,jj)=fading(mm,jj)* exp(-1i*2*pi*fc*delay(mm,jj)) *sinc((l-1)-delay(mm,jj)) ...
+                Br_angle_Phi_tmp(mm,l,jj)=fading(mm,jj) * sinc((l-1)-delay(mm,jj)) ...
                     * exp(-1i*2*pi*(position_elements_nor(1)*r_x + position_elements_nor(2)*r_y + position_elements_nor(3)*r_z)) ...
                     * (-1i*2*pi)*(-position_elements_nor(1) * sin(DOA_Theta(mm,jj)) * sin(DOA_Phi(mm,jj)) + ...
                     + position_elements_nor(2) * sin(DOA_Theta(mm,jj)) * cos(DOA_Phi(mm,jj))  + position_elements_nor(3) * r_z);

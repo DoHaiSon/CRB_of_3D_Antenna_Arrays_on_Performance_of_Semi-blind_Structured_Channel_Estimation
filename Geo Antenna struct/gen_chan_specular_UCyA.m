@@ -1,4 +1,4 @@
-function [H,h_vec] = gen_chan_specular(fading,delay,DOA_Phi,DOA_Theta,position_elements_nor,Nr_UCA,Nr_ULA,L,N_t, fc)
+function [H,h_vec] = gen_chan_specular_UCyA(fading,delay,DOA_Phi,DOA_Theta,position_elements_nor,Nr_UCA,Nr_ULA,L,N_t)
     % fading, delay, DOA of size (M,Nt)
     H = zeros(Nr_ULA*Nr_UCA,L,N_t);
     M = size(DOA_Theta,1);  

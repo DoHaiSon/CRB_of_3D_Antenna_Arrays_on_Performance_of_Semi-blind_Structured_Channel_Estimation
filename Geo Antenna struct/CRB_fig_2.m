@@ -129,9 +129,9 @@ for t = 1:10
     G_UCyA  = [dev_h_fading_UCyA, dev_h_conj_fading_UCyA, dev_h_delay_UCyA, dev_h_angle_Theta_UCyA, dev_h_angle_Phi_UCyA]; 
     
     %% Partial lambda
-    [H_ULA,  h_true_ULA,  LAMBDA_ULA,  partial_LAMBDA_ULA]  = partial_LAMBDA_ULA ( fading, delay, DOA_Phi, DOA_Theta, ULA_elements_nor,  Nr, L, Nt, FL );
+    [H_ULA,  h_true_ULA,  LAMBDA_ULA,  partial_LAMBDA_ULA]  = partial_LAMBDA_ULA_f ( fading, delay, DOA_Phi, DOA_Theta, ULA_elements_nor,  Nr, L, Nt, FL );
     
-    [H_UCyA, h_true_UCyA, LAMBDA_UCyA, partial_LAMBDA_UCyA] = partial_LAMBDA_UCyA( fading, delay, DOA_Phi, DOA_Theta, UCyA_elements_nor, Nr_UCA, Nr_ULA, L, Nt, FL );
+    [H_UCyA, h_true_UCyA, LAMBDA_UCyA, partial_LAMBDA_UCyA] = partial_LAMBDA_UCyA_f( fading, delay, DOA_Phi, DOA_Theta, UCyA_elements_nor, Nr_UCA, Nr_ULA, L, Nt, FL );
     
     %% CRB
     N_total = 64;

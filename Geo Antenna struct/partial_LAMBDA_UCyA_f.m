@@ -1,4 +1,4 @@
-function [ H, h_true, LAMBDA, partial_LAMBDA ] = partial_LAMBDA_UCyA( fading, delay, DOA_Phi, DOA_Theta, position_elements_nor, Nr_UCA, Nr_ULA, L, Nt, FL )
+function [ H, h_true, LAMBDA, partial_LAMBDA ] = partial_LAMBDA_UCyA_f( fading, delay, DOA_Phi, DOA_Theta, position_elements_nor, Nr_UCA, Nr_ULA, L, Nt, FL )
 
     [H, h_true] = gen_chan_specular_UCyA(fading,delay,DOA_Phi,DOA_Theta,position_elements_nor,Nr_UCA,Nr_ULA,L,Nt);
 

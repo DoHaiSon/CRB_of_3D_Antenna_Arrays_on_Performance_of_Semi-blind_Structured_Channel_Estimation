@@ -1,4 +1,4 @@
-function Br_angle_Phi= SEMI_spec_chan_derive_angle_Phi(mag,phase,delay,DOA_Phi,DOA_Theta,position_elements_nor,L,N,M,Nt)
+function Br_angle_Phi= SEMI_spec_chan_derive_angle_Phi(mag, phase, delay, DOA_Phi, DOA_Theta, position_elements_nor, L, N, M, Nt)
 %Nt   % number of transmit antennas
 %Nr   % number of receive antennas
 %L    % channel order
@@ -21,10 +21,19 @@ function Br_angle_Phi= SEMI_spec_chan_derive_angle_Phi(mag,phase,delay,DOA_Phi,D
             end
         end
     end
-    Br_angle_Phi_tmp1=cell(1,Nt);
-    for jj = 1 : Nt
-        Br_angle_Phi_tmp1{1,jj}=Br_angle_Phi_tmp(:,:,:,jj);
+    
+    Br_angle_Phi_tmp0 = cell(Nt, N);
+    for nt = 1 : Nt
+        for nn = 1 : N
+            Br_angle_Phi_tmp0{nt, nn} = squeeze(Br_angle_Phi_tmp(nn,:,:,nt));
+        end
     end
-    Br_angle_Phi=blkdiag(Br_angle_Phi_tmp1{:});
+    
+    Br_angle_Phi_tmp1 = cell(1,Nt);
+    for nt = 1 : Nt
+        Br_angle_Phi_tmp1{1, nt} = blkdiag(Br_angle_Phi_tmp0{nt,:});
+    end
+    
+    Br_angle_Phi = blkdiag(Br_angle_Phi_tmp1{:});
 end
 

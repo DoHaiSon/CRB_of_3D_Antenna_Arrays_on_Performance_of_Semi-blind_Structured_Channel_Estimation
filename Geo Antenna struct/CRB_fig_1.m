@@ -7,19 +7,22 @@ clc;
 
 Nt      = 2;                    % number of transmit antennas
 
-Nr_UCA  = 8;                    % UCA
-Nr_ULA  = 2;                    % UCyA
+Nr_UCA  = 16;                   % UCA
+Nr_ULA  = 4;                    % UCyA
 
 Nr      = Nr_UCA * Nr_ULA;      % ULA
 
 L       = 4;                    % channel order
-N       = unifrnd(1, 10);       % Number of TCs
-M       = unifrnd(1, 10);       % Number of sub-path per TC  
+% N       = ceil(unifrnd(1, 10)); % Number of TCs
+% M       = ceil(unifrnd(1, 10)); % Number of sub-path per TC  
+N       = 4;
+M       = 4;
 Pxp     = 1;
-K       = 64;                   % OFDM subcarriers
+K       = 256;                  % OFDM subcarriers
 F       = dftmtx(K);
 FL      = F(:,1:L);
 sigmax2 = 1;
+fc      = 28e9;                 % Carrier Freq (mmWave)
 
 %% Generate position of elements in arrays
 d_ULA_nor   = 0.5;
@@ -64,16 +67,31 @@ CRB_op_ULA_spec_f    = [];
 CRB_op_UCyA_f        = [];
 CRB_op_UCyA_spec_f   = [];
 
-for t = 1:100
+for t = 1:2
     tic
     fprintf('Working at: %d iters.\n', t);
-    %% Channel generation 
-    mag         = 1/sqrt(2)*(rand(M, Nt)  + 1i*rand(M, Nt));
-    phase       = unifrnd(0, 2*pi, [N, M, Nt]);
-    delay       = exprnd(1/0.043, M, Nt)  * 10^(-9);
-    DOA_Phi     = rand(M,Nt) * pi/2;        
-    DOA_Theta   = rand(M,Nt) * pi/2;                
-
+    %% Channel generation
+    mag         = zeros(N, M, Nt);      % Path loss
+    phase       = zeros(N, M, Nt);      % Sub-path phase
+    delay       = zeros(N, M, Nt);      % TC + sub-path delay
+    DOA_Theta   = zeros(N, M, Nt);      % Sub-path phase offset Theta
+    DOA_Phi     = zeros(N, M, Nt);      % Sub-path phase offset Phi
+    
+    for nt = 1 : Nt
+        phase_nt =  unifrnd(0, 2*pi, [N, 1]);
+%         delay_nt = 
+        for nn = 1 : N
+            for mm = 1 : M
+                phase(nt, nn, mm) = phase_nt(nn);
+                               
+            end
+        end
+    end
+    mag         = gen_pathloss(fc, 100, 1.2, 1.8, N, M, Nt);
+    delay       = exprnd(1/0.043, [N, M, Nt])  * 10^(-9);
+    DOA_Theta   = normrnd(0, 19.3, [N, M, Nt]) * (pi/180);
+    DOA_Phi     = normrnd(0, 11.3, [N, M, Nt]) * (pi/180);       
+                
     %% Derivative
     dev_h_mag_ULA           = [];
     dev_h_phase_ULA         = [];
@@ -88,37 +106,37 @@ for t = 1:100
     dev_h_angle_Phi_UCyA    = [];
     
     for Nr_index=1:Nr
-        Br_mag                  = SEMI_spec_chan_derive_mag(mag,phase,delay,DOA_Phi,DOA_Theta, ULA_elements_nor(:, 1, Nr_index),L,N,M,Nt);
+        Br_mag                  = SEMI_spec_chan_derive_mag(        mag, phase, delay, DOA_Phi, DOA_Theta, ULA_elements_nor(:, 1, Nr_index), L, N, M, Nt);
         dev_h_mag_ULA           = [dev_h_mag_ULA; transpose(Br_mag)];
 
-        Br_phase                = SEMI_spec_chan_derive_phase(mag,phase,delay,DOA_Phi,DOA_Theta, ULA_elements_nor(:, 1, Nr_index),L,N,M,Nt);
+        Br_phase                = SEMI_spec_chan_derive_phase(      mag, phase, delay, DOA_Phi, DOA_Theta, ULA_elements_nor(:, 1, Nr_index), L, N, M, Nt);
         dev_h_phase_ULA         = [dev_h_phase_ULA; transpose(Br_phase)];
 
-        Br_delay                = SEMI_spec_chan_derive_delay(mag,phase,delay,DOA_Phi,DOA_Theta,ULA_elements_nor(:, 1, Nr_index),L,N,M,Nt);
+        Br_delay                = SEMI_spec_chan_derive_delay(      mag, phase, delay, DOA_Phi, DOA_Theta, ULA_elements_nor(:, 1, Nr_index), L, N, M, Nt);
         dev_h_delay_ULA         = [dev_h_delay_ULA; transpose(Br_delay)];
         
-        Br_angle_Theta          = SEMI_spec_chan_derive_angle_Theta(mag,phase,delay,DOA_Phi,DOA_Theta,ULA_elements_nor(:, 1, Nr_index),L,N,M,Nt);
+        Br_angle_Theta          = SEMI_spec_chan_derive_angle_Theta(mag, phase, delay, DOA_Phi, DOA_Theta, ULA_elements_nor(:, 1, Nr_index), L, N, M, Nt);
         dev_h_angle_Theta_ULA   = [dev_h_angle_Theta_ULA; transpose(Br_angle_Theta)];
 
-        Br_angle_Phi            = SEMI_spec_chan_derive_angle_Phi(mag,phase,delay,DOA_Phi,DOA_Theta,ULA_elements_nor(:, 1, Nr_index),L,N,M,Nt);
+        Br_angle_Phi            = SEMI_spec_chan_derive_angle_Phi(  mag, phase, delay, DOA_Phi, DOA_Theta, ULA_elements_nor(:, 1, Nr_index), L, N, M, Nt);
         dev_h_angle_Phi_ULA     = [dev_h_angle_Phi_ULA; transpose(Br_angle_Phi)];
     end
     
     for Nr_ULA_index=1:Nr_ULA
         for Nr_UCA_index=1:Nr_UCA
-            Br_mag              = SEMI_spec_chan_derive_mag(mag,phase,delay,DOA_Phi,DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index),L,N,M,Nt);
+            Br_mag              = SEMI_spec_chan_derive_mag(        mag, phase, delay, DOA_Phi, DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index), L, N, M, Nt);
             dev_h_mag_UCyA      = [dev_h_mag_UCyA; transpose(Br_mag)];
 
-            Br_phase            = SEMI_spec_chan_derive_phase(mag,phase,delay,DOA_Phi,DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index),L,N,M,Nt);
+            Br_phase            = SEMI_spec_chan_derive_phase(      mag, phase, delay, DOA_Phi, DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index), L, N, M, Nt);
             dev_h_phase_UCyA    = [dev_h_phase_UCyA; transpose(Br_phase)];
 
-            Br_delay            = SEMI_spec_chan_derive_delay(mag,phase,delay,DOA_Phi,DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index),L,N,M,Nt);
+            Br_delay            = SEMI_spec_chan_derive_delay(      mag, phase, delay, DOA_Phi, DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index), L, N, M, Nt);
             dev_h_delay_UCyA    = [dev_h_delay_UCyA; transpose(Br_delay)];
             
-            Br_angle_Theta      = SEMI_spec_chan_derive_angle_Theta(mag,phase,DOA_Phi,DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index),L,N,M,Nt);
+            Br_angle_Theta      = SEMI_spec_chan_derive_angle_Theta(mag, phase, delay, DOA_Phi, DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index), L, N, M, Nt);
             dev_h_angle_Theta_UCyA = [dev_h_angle_Theta_UCyA; transpose(Br_angle_Theta)];
 
-            Br_angle_Phi        = SEMI_spec_chan_derive_angle_Phi(mag,phase,delay,DOA_Phi,DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index),L,N,M,Nt);
+            Br_angle_Phi        = SEMI_spec_chan_derive_angle_Phi(  mag, phase, delay, DOA_Phi, DOA_Theta, UCyA_elements_nor(:, Nr_ULA_index, Nr_UCA_index), L, N, M, Nt);
             dev_h_angle_Phi_UCyA   = [dev_h_angle_Phi_UCyA; transpose(Br_angle_Phi)];
         end
     end
@@ -137,7 +155,7 @@ for t = 1:100
         sigmav2 = 10^(-SNR(snr_i)/10);
     %============================================
         %Only Pilot    
-        X_nga = kron(eye(Nr),X);
+        X_nga = kron(eye(Nr * N),X);
     %============================================
         Iop                     = X_nga' * X_nga / sigmav2;
         Iop_full                = N_pilot * Iop;

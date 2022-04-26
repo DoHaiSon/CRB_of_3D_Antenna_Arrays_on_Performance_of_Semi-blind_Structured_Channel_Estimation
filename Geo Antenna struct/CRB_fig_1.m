@@ -5,30 +5,30 @@ clc;
 
 %% Declear
 
-Nt      = 2;                    % number of transmit antennas
+Nt      = 1;                    % number of transmit antennas
 
-Nr_UCA  = 8;                   % UCA
+Nr_UCA  = 16;                   % UCA
 Nr_ULA  = 4;                    % UCyA
 
 Nr      = Nr_UCA * Nr_ULA;      % ULA
 
 L       = 4;                    % channel order
-N       = 12;                   % Number of clusters
-M       = 20;                   % Number of Rays per clusters
+N       = 12;
+M       = 20;
 Pxp     = 1;
-K       = 64;                   % OFDM subcarriers
+K       = 64;                  % OFDM subcarriers
 F       = dftmtx(K);
 FL      = F(:,1:L);
 fc      = 28e9;                 % Carrier Freq (mmWave)
-K_r     = db2mag(normrnd(7, 4));% Rician K-factor
-abs_delay = 6 * 10^(-9);        % Absolute delay
-rt      = 3;                    % Delay scaling factor
-gamma_z = db2mag(3);            % std SF per cluster in dB
-AOA_LOS = 45;                   % LOS AOA in degree
-ZOA_LOS = 45;                   % LOS ZOA in degree
-c_DS    = 5;                    % Cluster Delay spread
-c_ASA   = 17;                   % Cluster RMS angle AOA spread
-c_ZSA   = 7;                    % Cluster RMS angle ZOA spread
+K_r     = db2mag(normrnd(7, 4));
+abs_delay = 6 * 10^(-9);
+rt      = 3;
+gamma_z = db2mag(3);
+AOA_LOS = 45;
+ZOA_LOS = 45;
+c_DS    = 5;
+c_ASA   = 17;
+c_ZSA   = 7;
 
 
 %% Generate position of elements in arrays
@@ -69,6 +69,12 @@ for ii = 1 : Nt
     X  = [X diag(ZC(:,ii))*FL];
 end
 
+mag_f = {};
+phase_f = {};
+delay_f = {};
+ZOA_f = {};
+AOA_f = {};
+
 CRB_op_ULA_f         = [];
 CRB_op_ULA_spec_f    = [];
 CRB_op_UCyA_f        = [];
@@ -78,11 +84,11 @@ for t = 1:10
     tic
     fprintf('Working at: %d iters.\n', t);
     %% Channel generation
-    mag         = zeros(N, M, Nt);      % Magnitude
-    phase       = zeros(N, M, Nt);      % Polarisation
-    delay       = zeros(N, M, Nt);      % Cluster + ray delay
-    ZOA         = zeros(N, M, Nt);      % Cluster + offset ZOA ray
-    AOA         = zeros(N, M, Nt);      % Cluster + offset AOA ray
+    mag         = zeros(N, M, Nt);      % Path loss
+    phase       = zeros(N, M, Nt);      % Sub-path phase
+    delay       = zeros(N, M, Nt);      % TC + sub-path delay
+    ZOA         = zeros(N, M, Nt);      % Sub-path phase offset Theta
+    AOA         = zeros(N, M, Nt);      % Sub-path phase offset AOA
     
     for nt = 1 : Nt
         phase_n = unifrnd(-pi, pi, [N, 1]);
@@ -136,6 +142,12 @@ for t = 1:10
             end
         end
     end     
+    mag_f{t} = mag;
+    phase_f{t} = phase;
+    delay_f{t} = delay;
+    ZOA_f{t} = ZOA;
+    AOA_f{t} = AOA;
+    
                 
     %% Derivative
     dev_h_mag_ULA       = [];
@@ -208,10 +220,20 @@ for t = 1:10
     %============================================
         %Only Pilot Specular   
         Iop_spec_ULA            = G_ULA*G_ULA'*Iop_full*G_ULA*G_ULA';
-        CRB_op_ULA_spec(snr_i)  = abs(trace(pinv(Iop_spec_ULA)));
+        try
+            CRB_op_ULA_spec(snr_i)  = abs(trace(pinv(Iop_spec_ULA)));
+        catch ME
+            t = t - 1;
+            continue
+        end
         
         Iop_spec_UCyA           = G_UCyA*G_UCyA'*Iop_full*G_UCyA*G_UCyA';
-        CRB_op_UCyA_spec(snr_i) = abs(trace(pinv(Iop_spec_UCyA)));
+        try
+            CRB_op_UCyA_spec(snr_i) = abs(trace(pinv(Iop_spec_UCyA)));
+        catch ME
+            t = t - 1;
+            continue
+        end
     end
     
     CRB_op_ULA_f        = [CRB_op_ULA_f; CRB_op];

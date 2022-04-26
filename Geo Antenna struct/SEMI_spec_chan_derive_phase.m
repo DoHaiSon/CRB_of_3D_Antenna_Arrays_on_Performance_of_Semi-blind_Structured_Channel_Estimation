@@ -1,4 +1,4 @@
-function Br_phase= SEMI_spec_chan_derive_phase(mag, phase, delay, DOA_Phi, DOA_Theta, position_elements_nor, L, N, M, Nt)
+function Br_phase = SEMI_spec_chan_derive_phase(mag, phase, delay, AOA, ZOA, position_elements_nor, L, N, M, Nt)
 %Nt   % number of transmit antennas
 %Nr   % number of receive antennas
 %L    % channel order
@@ -10,9 +10,9 @@ function Br_phase= SEMI_spec_chan_derive_phase(mag, phase, delay, DOA_Phi, DOA_T
         for nn = 1 : N
             for mm = 1 : M
                 for l = 1 : L
-                    r_x = sin(DOA_Theta(nn,mm,jj)) * cos(DOA_Phi(nn,mm,jj));
-                    r_y = sin(DOA_Theta(nn,mm,jj)) * sin(DOA_Phi(nn,mm,jj));
-                    r_z = cos(DOA_Theta(nn,mm,jj));
+                    r_x = sin(ZOA(nn,mm,jj)) * cos(AOA(nn,mm,jj));
+                    r_y = sin(ZOA(nn,mm,jj)) * sin(AOA(nn,mm,jj));
+                    r_z = cos(ZOA(nn,mm,jj));
                     Br_phase_tmp(nn,mm,l,jj)= 1i * mag(nn,mm,jj) * exp(1i * phase(nn,mm,jj)) * sinc((l-1)-delay(nn,mm,jj)) ...
                         * exp(-1i*2*pi*(position_elements_nor(1)*r_x + position_elements_nor(2)*r_y + position_elements_nor(3)*r_z));
                 end

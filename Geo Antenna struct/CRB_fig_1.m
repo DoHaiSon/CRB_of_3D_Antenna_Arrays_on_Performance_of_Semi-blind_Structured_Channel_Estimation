@@ -2,10 +2,11 @@ clear all;
 %close all;
 clc; 
 
+addpath('./funcs');
 
 %% Declear
 
-Nt      = 1;                    % number of transmit antennas
+Nt      = 2;                    % number of transmit antennas
 
 Nr_UCA  = 16;                   % UCA
 Nr_ULA  = 4;                    % UCyA
@@ -13,22 +14,22 @@ Nr_ULA  = 4;                    % UCyA
 Nr      = Nr_UCA * Nr_ULA;      % ULA
 
 L       = 4;                    % channel order
-N       = 12;
-M       = 20;
+N       = 12;                   % Number of clusters
+M       = 20;                   % Number of Rays per clusters
 Pxp     = 1;
-K       = 64;                  % OFDM subcarriers
+K       = 64;                   % OFDM subcarriers
 F       = dftmtx(K);
 FL      = F(:,1:L);
 fc      = 28e9;                 % Carrier Freq (mmWave)
-K_r     = db2mag(normrnd(7, 4));
-abs_delay = 6 * 10^(-9);
-rt      = 3;
-gamma_z = db2mag(3);
-AOA_LOS = 45;
-ZOA_LOS = 45;
-c_DS    = 5;
-c_ASA   = 17;
-c_ZSA   = 7;
+K_r     = db2mag(normrnd(7, 4));% Rician K-factor
+abs_delay = 6 * 10^(-9);        % Absolute delay
+rt      = 3;                    % Delay scaling factor
+gamma_z = db2mag(3);            % std SF per cluster in dB
+AOA_LOS = 45;                   % LOS AOA in degree
+ZOA_LOS = 45;                   % LOS ZOA in degree
+c_DS    = 5;                    % Cluster Delay spread
+c_ASA   = 17;                   % Cluster RMS angle AOA spread
+c_ZSA   = 7;                    % Cluster RMS angle ZOA spread
 
 
 %% Generate position of elements in arrays
@@ -84,16 +85,16 @@ for t = 1:10
     tic
     fprintf('Working at: %d iters.\n', t);
     %% Channel generation
-    mag         = zeros(N, M, Nt);      % Path loss
-    phase       = zeros(N, M, Nt);      % Sub-path phase
-    delay       = zeros(N, M, Nt);      % TC + sub-path delay
-    ZOA         = zeros(N, M, Nt);      % Sub-path phase offset Theta
-    AOA         = zeros(N, M, Nt);      % Sub-path phase offset AOA
+    mag         = zeros(N, M, Nt);      % Magnitude
+    phase       = zeros(N, M, Nt);      % Polarisation
+    delay       = zeros(N, M, Nt);      % Cluster + ray delay
+    ZOA         = zeros(N, M, Nt);      % Cluster + offset ZOA ray
+    AOA         = zeros(N, M, Nt);      % Cluster + offset AOA ray
     
     for nt = 1 : Nt
         phase_n = unifrnd(-pi, pi, [N, 1]);
         DS      = gen_DS(fc);
-        delay_n = gen_cluster_delays(rt, DS, N);
+        delay_n = gen_cluster_delays(rt, DS, N) + abs_delay;
         mag_n   = gen_cluster_powers(delay_n, rt, DS, gamma_z, N);
         ASA     = gen_ASA(fc);
         AOA_n   = gen_cluster_AOAs(ASA, mag_n, K_r, AOA_LOS, N);
@@ -106,11 +107,11 @@ for t = 1:10
                 phase(nn, mm, nt) = phase_n(nn);
                 switch mm 
                     case {1, 2, 3, 4, 5, 6, 7, 8, 19, 20}
-                        delay(nn, mm, nt) = delay_n(nn) + abs_delay;
+                        delay(nn, mm, nt) = delay_n(nn);
                     case {9, 10, 11, 12, 17, 18}
-                        delay(nn, mm, nt) = delay_n(nn) + 1.28 * c_DS * 10^-9 + abs_delay;
+                        delay(nn, mm, nt) = delay_n(nn) + 1.28 * c_DS * 10^-9;
                     case {13, 14, 15, 16}
-                        delay(nn, mm, nt) = delay_n(nn) + 2.56 * c_DS * 10^-9 + abs_delay;
+                        delay(nn, mm, nt) = delay_n(nn) + 2.56 * c_DS * 10^-9;
                 end
                 
                 switch mm 

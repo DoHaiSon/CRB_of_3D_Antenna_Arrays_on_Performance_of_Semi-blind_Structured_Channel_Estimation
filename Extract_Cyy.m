@@ -166,7 +166,6 @@ for snr_i = 1 : length(SNR)
             Cyy_inv  = pinv(Cyy);   
             save(['./Cyy/SNR_' num2str(SNR(snr_i)) '.mat'], 'Cyy_inv');
         catch ME
-            disp(ME);
             snr_i = snr_i - 1;
             continue
         end

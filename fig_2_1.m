@@ -20,7 +20,7 @@ K       = 64;                   % OFDM subcarriers
 F       = dftmtx(K);
 FL      = F(:,1:L);
 sigmax2 = 1; 
-loop    = 100;
+loop    = 10;
 
 
 %% Generate position of elements in arrays
@@ -170,12 +170,7 @@ for t = 1:loop
         partial_LAMBDA = partial_LAMBDA_ULA;
         Cyy      = sigmax2  * LAMBDA  * LAMBDA'   + sigmav2 * eye(K*Nr);
         Cyy      = gpuArray(Cyy);
-        try
-            Cyy_inv  = pinv(Cyy);   
-        catch ME
-            t = t - 1;
-            continue
-        end
+        Cyy_inv  = pinv(Cyy);   
         
         partial_Cyy_hii = sigmax2 * LAMBDA * partial_LAMBDA';
         % Slepian-Bangs Formula
@@ -202,13 +197,13 @@ for t = 1:loop
         CRB_SB_spec_i           = pinv(I_SB_spec);
         CRB_SB_UCyA_spec(snr_i) = abs(trace(CRB_SB_spec_i));
     end
-    if (all(diff(CRB_SB_UCyA_spec) <= 0.00001) && all(diff(CRB_SB_ULA_spec) <= 0.00001))
+%     if (all(diff(CRB_SB_ULA_spec_f) <= 0.00001) && all(diff(CRB_SB_UCyA_spec_f) <= 0.00001))
         CRB_SB_ULA_f        = [CRB_SB_ULA_f; CRB_SB_ULA];
         CRB_SB_ULA_spec_f   = [CRB_SB_ULA_spec_f; CRB_SB_ULA_spec];
         CRB_SB_UCyA_spec_f  = [CRB_SB_UCyA_spec_f; CRB_SB_UCyA_spec];
-    else
-        t = t-1;
-    end
+%     else
+%         t = t-1;
+%     end
     toc
 end
 

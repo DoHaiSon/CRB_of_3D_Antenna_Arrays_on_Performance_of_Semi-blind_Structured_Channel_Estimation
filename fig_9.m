@@ -1,5 +1,5 @@
 clear all;
-% close all;
+close all;
 clc; 
 
 addpath('./funcs');
@@ -10,8 +10,8 @@ Nt      = 2;                    % number of transmit antennas
 
 N_r_UCA = 8:8:64;                   % UCA
 Nr_ULA  = 4;                    % UCyA
-snr_i   = 5;
-loop    = 5000;
+snr_i   = 15;
+loop    = 10;
 
 gamma_f = {};
 AOA_f = {};
@@ -184,7 +184,7 @@ for t = 1:loop
         end
     end
     
-    if (all(diff(CRB_op_ULA_spec) <= 0.0000001) && all(diff(CRB_op_UCyA_spec) <= 0.0000001))
+    if (all(diff(CRB_op_ULA_spec) <= 0.00001) && all(diff(CRB_op_UCyA_spec) <= 0.00001))
         CRB_op_ULA_f        = [CRB_op_ULA_f; CRB_op];
         CRB_op_UCyA_f       = [CRB_op_UCyA_f; CRB_op];
         CRB_op_ULA_spec_f   = [CRB_op_ULA_spec_f; CRB_op_ULA_spec];

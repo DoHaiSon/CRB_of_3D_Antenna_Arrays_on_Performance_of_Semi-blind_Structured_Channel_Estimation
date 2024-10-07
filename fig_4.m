@@ -10,7 +10,7 @@ Nt      = 2;                    % number of transmit antennas
 
 Nr_UCA  = 24;                   % UCA
 N_r_ULA = 1:10;                 % UCyA
-snr_i   = 15;
+snr_i   = 5;
 loop    = 10;
 
 gamma_f = {};

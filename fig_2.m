@@ -184,7 +184,7 @@ for t = 1:loop
         CRB_SB_i           = pinv(I_SB);
         CRB_SB_ULA(snr_i)  = abs(trace(CRB_SB_i));
 
-        clear I_D;    
+%         clear I_D;    
     %============================================
         %Semiblind Specular
         I_SB_spec               = G_ULA*G_ULA'*I_SB*G_ULA*G_ULA';
@@ -219,7 +219,7 @@ for t = 1:loop
         CRB_SB_spec_i           = pinv(I_SB_spec);
         CRB_SB_UCyA_spec(snr_i) = abs(trace(CRB_SB_spec_i));
     end
-    if (all(diff(CRB_SB_ULA_spec) <= 0.00001) && all(diff(CRB_SB_UCyA_spec) <= 0.00001))
+    if (all(diff(CRB_SB_ULA_spec_f) <= 0.00001) && all(diff(CRB_SB_UCyA_spec_f) <= 0.00001))
         CRB_SB_ULA_f        = [CRB_SB_ULA_f; CRB_SB_ULA];
         CRB_SB_UCyA_f       = [CRB_SB_UCyA_f; CRB_SB_UCyA];
         CRB_SB_ULA_spec_f   = [CRB_SB_ULA_spec_f; CRB_SB_ULA_spec];

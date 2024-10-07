@@ -19,9 +19,9 @@ Pxp     = 1;
 K       = 64;                   % OFDM subcarriers
 F       = dftmtx(K);
 FL      = F(:,1:L);
-loop    = 5000;
-snr_i   = 10;
-rot_nor_f = 0:0.05:0.95;
+loop    = 10000;
+snr_i   = 5;
+rot_nor_f = 0:0.1:0.9;
 
 CRB_op_ULA_f         = [];
 CRB_op_ULA_spec_f    = [];

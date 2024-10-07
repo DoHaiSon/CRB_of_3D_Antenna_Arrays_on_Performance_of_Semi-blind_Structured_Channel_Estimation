@@ -19,8 +19,8 @@ Pxp     = 1;
 K       = 64;                   % OFDM subcarriers
 F       = dftmtx(K);
 FL      = F(:,1:L);
-rot_nor = 0.7;
-loop    = 10000;
+rot_nor = 0.1;
+loop    = 100;
 
 
 %% Generate position of elements in arrays

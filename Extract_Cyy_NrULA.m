@@ -9,7 +9,7 @@ addpath('./funcs');
 Nt      = 2;                    % number of transmit antennas
 
 Nr_UCA  = 24;                   % UCA
-N_r_ULA = 8:10;                 % UCyA
+N_r_ULA = 1:10;                 % UCyA
 snr_i   = 5;
 loop    = 10;
 
@@ -170,7 +170,7 @@ for Nr_ULA = N_r_ULA
     Cyy      = gpuArray(Cyy);
     try
         Cyy_inv  = pinv(Cyy);   
-        save(['./Cyy/NrULA_5db_' num2str(Nr_ULA) '.mat'], 'Cyy_inv', '-v7.3');
+        save(['./Cyy/NrULA_5db_' num2str(Nr_ULA) '.mat'], 'Cyy_inv');
     catch ME
         Nr_ULA = Nr_ULA - 1;
         continue

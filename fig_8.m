@@ -10,7 +10,7 @@ Nt      = 2;                    % number of transmit antennas
 
 Nr_UCA  = 24;                   % UCA
 N_r_ULA = 1:10;                  % UCyA
-snr_i   = 15;
+snr_i   = 5;
 loop    = 1000;
 
 gamma_f = {};
@@ -184,7 +184,7 @@ for t = 1:loop
         end
     end
     
-    if (all(diff(CRB_op_ULA_spec) <= 0.0000001) && all(diff(CRB_op_UCyA_spec) <= 0.0000001))
+    if (all(diff(CRB_op_ULA_spec) <= 0.00001) && all(diff(CRB_op_UCyA_spec) <= 0.00001))
         CRB_op_ULA_f        = [CRB_op_ULA_f; CRB_op];
         CRB_op_UCyA_f       = [CRB_op_UCyA_f; CRB_op];
         CRB_op_ULA_spec_f   = [CRB_op_ULA_spec_f; CRB_op_ULA_spec];

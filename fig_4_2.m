@@ -11,7 +11,7 @@ Nt      = 2;                    % number of transmit antennas
 Nr_UCA  = 24;                   % UCA
 N_r_ULA = 1:10;                 % UCyA
 snr_i   = 5;
-loop    = 1000;
+loop    = 100;
 loop_i  = 1;
 
 CRB_SB_ULA_f         = [];
@@ -21,7 +21,7 @@ CRB_SB_UCyA_spec_f   = [];
 I_D_f = {};
 
 for Nr_ULA = N_r_ULA
-    I_D_f{Nr_ULA} = gather(getfield(load(['./I_D/NrULA_5db_' num2str(Nr_ULA) '.mat']), 'I_D'));
+    I_D_f{Nr_ULA} = gather(getfield(load('./I_D/SNR_5.mat'), 'I_D'));
 end
 
 while true

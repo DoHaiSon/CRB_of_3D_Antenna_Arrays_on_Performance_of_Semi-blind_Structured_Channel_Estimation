@@ -182,33 +182,32 @@ for t = 1:loop
     end
     
     CRB_op_ULA_f        = [CRB_op_ULA_f; CRB_op];
-    CRB_op_UCyA_f       = [CRB_op_UCyA_f; CRB_op];
+%     CRB_op_UCyA_f       = [CRB_op_UCyA_f; CRB_op];
     CRB_op_ULA_spec_f   = [CRB_op_ULA_spec_f; CRB_op_ULA_spec];
     CRB_op_UCyA_spec_f  = [CRB_op_UCyA_spec_f; CRB_op_UCyA_spec];
     toc
 end
 
 CRB_op_ULA      = mean(CRB_op_ULA_f);
-CRB_op_UCyA     = mean(CRB_op_UCyA_f);
+% CRB_op_UCyA     = mean(CRB_op_UCyA_f);
 CRB_op_ULA_spec = mean(CRB_op_ULA_spec_f);
 CRB_op_UCyA_spec= mean(CRB_op_UCyA_spec_f);
 
 %% figure
 h = figure();
-semilogy(SNR, CRB_op_ULA, '-b', 'LineWidth', 1.5, 'Color', '#7E2F8E');
+semilogy(SNR, CRB_op_ULA, '-b *', 'LineWidth', 1.5, 'Color', '#7E2F8E');
 hold on;
-semilogy(SNR, CRB_op_UCyA, '*', 'LineWidth', 1.5, 'Color', "#0072BD", 'MarkerSize', 7);
+% semilogy(SNR, CRB_op_UCyA, '*', 'LineWidth', 1.5, 'Color', "#0072BD", 'MarkerSize', 7);
 semilogy(SNR, CRB_op_ULA_spec, '-g o', 'LineWidth', 1.5, 'Color', "#0072BD", 'MarkerFaceColor', "#FFFF00");
 semilogy(SNR, CRB_op_UCyA_spec, '-r d', 'LineWidth', 1.5, 'Color', "#FF0000", 'MarkerFaceColor', "#FFFF00");
 
 grid minor;
 ylabel('CRB (dB)', 'FontSize', 14, 'Interpreter','latex');
 xlabel('SNR (dB)', 'FontSize', 14, 'Interpreter','latex');
-legend('ULA: unst$_P$', 'UCyA: unst$_P$', 'ULA: stru$_P$', 'UCyA: stru$_P$', ...
+legend('Unstuctured', 'ULA: stru$_P$', 'UCyA: stru$_P$', ...
     'Interpreter', 'latex', 'FontSize', 14, 'Edgecolor', 'white');
 hAx=gca;                              % get the axes handle
 hAx.XTickLabel=hAx.XTickLabel;        % overwrite the existing tick labels with present values
 set(gcf,'color','w');
-ax = get(gca,'XTickLabel');
 xticks('auto');
-set(gca,'XTickLabel',ax,'FontName','Times','fontsize',12);
+set(gca,'FontName','Times','fontsize',12);
